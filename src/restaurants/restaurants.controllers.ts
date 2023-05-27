@@ -3,6 +3,7 @@ import { paginationValidator } from '@/validators/paginationValidator';
 import { ZodError } from 'zod';
 import { getRestaurants } from './restaurants.services';
 import { mapIssuesZodError } from '@/utils/mapIssuesZodError';
+import { HTTPBadRequestError } from '@/utils/httpBadRequest';
 
 export function RestaurantsController() {
 	async function getAll(req: Request, res: Response) {
@@ -16,7 +17,7 @@ export function RestaurantsController() {
 				return res.status(400).json({ issues: mapIssuesZodError(error) });
 			}
 
-			if (error instanceof Error) {
+			if (error instanceof HTTPBadRequestError) {
 				return res.status(400).json({ message: error.message });
 			}
 
