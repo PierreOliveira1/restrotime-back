@@ -10,7 +10,8 @@ const config: Config = {
 	testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 	testMatch: ['**/?(*.)+(spec|test).[t]s?(x)'],
 	moduleNameMapper: {
-		'^@config/(.*)$': resolve(__dirname, 'src/config/$1'),
+		'^@/(.*)$': resolve(__dirname, 'src/$1'),
+		'^@/database': resolve(__dirname, 'src/database/index.ts'),
 	},
 };
 

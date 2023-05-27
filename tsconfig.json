@@ -111,11 +111,8 @@
 		] /* List of folders to include type definitions from. */,
 		"baseUrl": "./",
 		"paths": {
-			"@config/*": ["src/config/*"],
-			"@controllers/*": ["src/controllers/*"],
-			"@database": ["src/database/index"],
-			"@services/*": ["src/services/*"],
-			"@validators/*": ["src/validators/*"]
+			"@/*": ["src/*"],
+			"@database": ["src/database/index"]
 		}
 	}
 }
