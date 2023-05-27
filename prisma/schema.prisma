@@ -6,3 +6,51 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+enum TypeRestaurant {
+  SNACK_BAR
+  FAST_FOOD
+  PIZZERIA
+  JAPANESE
+  ITALIAN
+  VEGETARIAN
+}
+
+type Schedule {
+  dayOfWeek Int
+  openAt    DateTime
+  closeAt   DateTime
+}
+
+model Restaurant {
+  id            String         @id @default(uuid()) @map("_id")
+  fantasyName   String
+  corporateName String?
+  cnpj          String         @unique
+  type          TypeRestaurant
+  phoneNumber   String
+  email         String         @unique
+  schedules     Schedule[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  address       Address?
+
+  @@map("restaurants")
+}
+
+model Address {
+  id           String      @id @default(uuid()) @map("_id")
+  street       String
+  number       Int
+  complement   String
+  district     String
+  city         String
+  state        String
+  zipCode      String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @default(now())
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+  restaurantId String?     @unique
+
+  @@map("addresses")
+}
