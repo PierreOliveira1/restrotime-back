@@ -11,7 +11,7 @@ const config: Config = {
 	testMatch: ['**/?(*.)+(spec|test).[t]s?(x)'],
 	moduleNameMapper: {
 		'^@/(.*)$': resolve(__dirname, 'src/$1'),
-		'^@/database': resolve(__dirname, 'src/database/index.ts'),
+		'^@database': resolve(__dirname, 'src/database/index'),
 	},
 };
 
