@@ -1,11 +1,13 @@
 import { OpenAPIV3 } from 'openapi-types';
 import path from 'node:path';
 import fs from 'node:fs';
+import { mergeObjects } from '@/utils/mergeObjects';
 
 type SwaggerDocument = () => Promise<OpenAPIV3.Document>;
+type SwaggerDocs = Partial<OpenAPIV3.Document>;
 
 const createSwaggerDocument: SwaggerDocument = async () => {
-	const pathControllers = path.resolve(__dirname, '..', '..', 'controllers');
+	const pathControllers = path.resolve(__dirname, '..', '..');
 	const docsDirs = fs.readdirSync(pathControllers);
 
 	const swaggerDocument: OpenAPIV3.Document = {
@@ -24,30 +26,20 @@ const createSwaggerDocument: SwaggerDocument = async () => {
 	for (const dir of docsDirs) {
 		try {
 			const isDocs = fs.existsSync(
-				path.resolve(__dirname, '..', '..', 'controllers', dir, 'docs/index.ts')
+				path.resolve(__dirname, '..', '..', dir, 'docs/index.ts'),
 			);
 
 			if (!isDocs) continue;
 
-			const { default: docs } = await import(`@controllers/${dir}/docs`);
+			const { default: docs } = await import(`@/${dir}/docs`);
 
-			swaggerDocument.paths = {
-				...swaggerDocument.paths,
-				...docs.paths,
-			};
 
-			if (!swaggerDocument.components)
-				swaggerDocument.components = { schemas: {} };
-
-			swaggerDocument.components.schemas = {
-				...swaggerDocument.components.schemas,
-				...docs.components.schemas,
-			};
+			const mergedObjects = mergeObjects<OpenAPIV3.Document, SwaggerDocs>(swaggerDocument, docs);
+			Object.assign(swaggerDocument, mergedObjects);
 		} catch (error) {
 			console.error(error);
 		}
 	}
-
 	return swaggerDocument;
 };
 
