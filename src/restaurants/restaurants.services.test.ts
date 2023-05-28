@@ -1,57 +1,78 @@
-import { Prisma } from '@prisma/client';
-import { GetRestaurantsResponse } from './dto/getRestaurants.dto';
-import { getRestaurants } from './restaurants.services';
-import { CacheManager } from '@/utils/cache';
+import {
+	createRestaurant,
+	getRestaurants,
+	getRestaurantById,
+	updateRestaurantById,
+	deleteRestaurantById,
+} from './restaurants.services';
+import {
+	createRestaurantUseCase,
+	deleteRestaurantByIdUseCase,
+	getRestaurantByIdUseCase,
+	getRestaurantsUseCase,
+	updateRestaurantByIdUseCase,
+} from './useCases';
+import { CreateRestaurant } from './validators/createRestaurant';
 
-describe('Restaurants Services', () => {
-	const cache = CacheManager();
+jest.mock('./useCases');
 
-	beforeAll(async () => {
-		cache.delMatch('^restaurants:');
+describe('Restaurant Services', () => {
+	const restaurantData: CreateRestaurant = {
+		fantasyName: 'Restaurant 1',
+		cnpj: '12345678901234',
+		corporateName: 'Restaurant 1 LTDA',
+		email: 'teste@gmail.com',
+		phoneNumber: '12345678901',
+		type: 'FAST_FOOD',
+		address: {
+			street: 'Street 1',
+			city: 'City 1',
+			complement: 'Complement 1',
+			district: 'District 1',
+			number: 'Number 1',
+			state: 'St',
+			zipCode: '12345678',
+		},
+	};
+
+	const paginationData = {
+		page: 1,
+		limit: 10,
+	};
+
+	afterAll(() => {
+		jest.clearAllMocks();
 	});
 
-	it('should be able to get restaurants', async () => {
-		const restaurants = await getRestaurants({ page: 1, limit: 10 });
-
-		expect(restaurants).toHaveProperty('data');
-		expect(Array.isArray(restaurants.data)).toBeTruthy();
-		expect(restaurants).toHaveProperty('pagination');
-		expect(restaurants.pagination).toHaveProperty('totalPages');
-		expect(restaurants.pagination).toHaveProperty('currentPage');
-		expect(restaurants.pagination).toHaveProperty('nextPage');
-
-	}, 20000);
-
-	it('should be able to get restaurants with cache', async () => {
-		const cacheKey = `restaurants:${1}:${10}`;
-
-		if (cache.has(cacheKey)) {
-			const cached = cache.get<GetRestaurantsResponse>(cacheKey);
-
-			if (cached) {
-				expect(cached).toHaveProperty('data');
-				expect(Array.isArray(cached.data)).toBeTruthy();
-				expect(cached).toHaveProperty('pagination');
-				expect(cached.pagination).toHaveProperty('totalPages');
-				expect(cached.pagination).toHaveProperty('currentPage');
-				expect(cached.pagination).toHaveProperty('nextPage');
-			}
-		}
+	it('should be createRestaurant should call createRestaurantUseCase with the provided restaurant data', async () => {
+		await createRestaurant(restaurantData);
+		expect(createRestaurantUseCase).toHaveBeenCalledWith(restaurantData);
 	});
 
-	it('should be get restaurants with page 0', async () => {
-		try	{
-			await getRestaurants({ page: 0, limit: 10 });
-		} catch (error) {
-			expect(error).toBeInstanceOf(Prisma.PrismaClientUnknownRequestError);
-		}
+	it('should call getRestaurantsUseCase with the provided pagination data', async () => {
+		await getRestaurants(paginationData);
+		expect(getRestaurantsUseCase).toHaveBeenCalledWith(paginationData);
 	});
 
-	it('should be get restaurants with limit 0', async () => {
-		try	{
-			await getRestaurants({ page: 1, limit: 0 });
-		} catch (error) {
-			expect(error).toBeInstanceOf(Prisma.PrismaClientUnknownRequestError);
-		}
+	it('should call getRestaurantByIdUseCase with the provided restaurant id', async () => {
+		const restaurantId = '123456';
+		await getRestaurantById(restaurantId);
+		expect(getRestaurantByIdUseCase).toHaveBeenCalledWith(restaurantId);
+	});
+
+	it('should call updateRestaurantByIdUseCase with the provided restaurant id and data', async () => {
+		const restaurantId = '123456';
+
+		await updateRestaurantById(restaurantId, restaurantData);
+		expect(updateRestaurantByIdUseCase).toHaveBeenCalledWith(
+			restaurantId,
+			restaurantData,
+		);
+	});
+
+	it('should call deleteRestaurantByIdUseCase with the provided restaurant id', async () => {
+		const restaurantId = '123456';
+		await deleteRestaurantById(restaurantId);
+		expect(deleteRestaurantByIdUseCase).toHaveBeenCalledWith(restaurantId);
 	});
 });
