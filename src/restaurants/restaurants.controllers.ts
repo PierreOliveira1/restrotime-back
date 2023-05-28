@@ -3,12 +3,15 @@ import { paginationValidator } from '@/validators/paginationValidator';
 import { ZodError } from 'zod';
 import { getRestaurants } from './restaurants.services';
 import { mapIssuesZodError } from '@/utils/mapIssuesZodError';
-import { HTTPBadRequestError } from '@/utils/httpBadRequest';
+import { HTTPRequestError } from '@/utils/httpRequestError';
 
 export function RestaurantsController() {
 	async function getAll(req: Request, res: Response) {
 		try {
-			const pagination = paginationValidator.parse(req.query);
+			const pagination = paginationValidator.parse({
+				page: Number(req.query.page),
+				limit: Number(req.query.limit),
+			});
 
 			const restaurants = await getRestaurants(pagination);
 			return res.status(200).json(restaurants);
@@ -17,8 +20,8 @@ export function RestaurantsController() {
 				return res.status(400).json({ issues: mapIssuesZodError(error) });
 			}
 
-			if (error instanceof HTTPBadRequestError) {
-				return res.status(400).json({ message: error.message });
+			if (error instanceof HTTPRequestError) {
+				return res.status(error.statusCode).json({ message: error.message });
 			}
 
 			return res.status(500).json({ message: 'Erro interno no servidor' });
