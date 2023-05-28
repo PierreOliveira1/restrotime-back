@@ -41,7 +41,7 @@ model Restaurant {
 model Address {
   id           String      @id @default(uuid()) @map("_id")
   street       String
-  number       Int
+  number       String
   complement   String
   district     String
   city         String
