@@ -1,60 +1,42 @@
-import { prisma } from '@database';
-import { Prisma } from '@prisma/client';
 import { PaginationValidator } from '@/validators/paginationValidator';
-import { CacheManager } from '@/utils/cache';
 import { GetRestaurantsResponse } from './dto/getRestaurants.dto';
-import { HTTPRequestError } from '@/utils/httpRequestError';
+import { CreateRestaurant } from './validators/createRestaurant';
+import { GetRestaurantResponse } from './dto/getRestaurant.dto';
+import { UpdateRestaurantDto } from './dto/updateRestaurant.dto';
+import {
+	createRestaurantUseCase,
+	deleteRestaurantByIdUseCase,
+	getRestaurantByIdUseCase,
+	getRestaurantsUseCase,
+	updateRestaurantByIdUseCase,
+} from './useCases';
 
-async function getRestaurants({ page, limit }: PaginationValidator): Promise<GetRestaurantsResponse> {
-	try {
-		const cache = CacheManager();
-		const cacheKey = `restaurants:${page}:${limit}`;
-
-		if (cache.has(cacheKey)) {
-			const cached = cache.get<GetRestaurantsResponse>(cacheKey);
-
-			if (cached) {
-				return cached;
-			}
-		}
-
-		const restaurants = await prisma.restaurant.findMany({
-			skip: page * limit - limit,
-			take: limit,
-			include: {
-				address: true,
-			},
-		});
-
-		const total = await prisma.restaurant.count();
-		const totalPages = Math.ceil(total / limit);
-
-		if (page > totalPages && page !== 1) {
-			throw new HTTPRequestError('A página solicitada não existe', 404);
-		}
-
-		const currentPage = page;
-		const nextPage = currentPage + 1 > totalPages ? null : currentPage + 1;
-
-		const data: GetRestaurantsResponse = {
-			data: restaurants,
-			pagination: {
-				totalPages,
-				currentPage,
-				nextPage,
-			},
-		};
-
-		cache.set(cacheKey, data);
-
-		return data;
-	} catch (error) {
-		if (error instanceof Prisma.PrismaClientKnownRequestError) {
-			throw new HTTPRequestError('Erro ao buscar restaurantes', 500);
-		}
-
-		throw error;
-	}
+export async function createRestaurant(
+	restaurant: CreateRestaurant,
+): Promise<GetRestaurantResponse> {
+	return createRestaurantUseCase(restaurant);
 }
 
-export { getRestaurants };
+export async function getRestaurants({
+	page,
+	limit,
+}: PaginationValidator): Promise<GetRestaurantsResponse> {
+	return getRestaurantsUseCase({ page, limit });
+}
+
+export async function getRestaurantById(
+	id: string,
+): Promise<GetRestaurantResponse> {
+	return getRestaurantByIdUseCase(id);
+}
+
+export async function updateRestaurantById(
+	id: string,
+	data: UpdateRestaurantDto,
+): Promise<GetRestaurantResponse> {
+	return updateRestaurantByIdUseCase(id, data);
+}
+
+export async function deleteRestaurantById(id: string) {
+	return deleteRestaurantByIdUseCase(id);
+}
