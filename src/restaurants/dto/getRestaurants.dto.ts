@@ -1,7 +1,8 @@
-import { Address, Restaurant } from '@prisma/client';
+import { Address, Restaurant, Schedule } from '@prisma/client';
 
 type RestaurantWithAddress = Restaurant & {
 	address: Address | null;
+	schedules: Schedule[];
 };
 
 export interface GetRestaurantsResponse {
