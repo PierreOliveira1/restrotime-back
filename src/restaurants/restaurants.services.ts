@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PaginationValidator } from '@/validators/paginationValidator';
 import { CacheManager } from '@/utils/cache';
 import { GetRestaurantsResponse } from './dto/getRestaurants.dto';
-import { HTTPBadRequestError } from '@/utils/httpBadRequest';
+import { HTTPRequestError } from '@/utils/httpRequestError';
 
 async function getRestaurants({ page, limit }: PaginationValidator): Promise<GetRestaurantsResponse> {
 	try {
@@ -28,6 +28,11 @@ async function getRestaurants({ page, limit }: PaginationValidator): Promise<Get
 
 		const total = await prisma.restaurant.count();
 		const totalPages = Math.ceil(total / limit);
+
+		if (page > totalPages && page !== 1) {
+			throw new HTTPRequestError('A página solicitada não existe', 404);
+		}
+
 		const currentPage = page;
 		const nextPage = currentPage + 1 > totalPages ? null : currentPage + 1;
 
@@ -45,7 +50,7 @@ async function getRestaurants({ page, limit }: PaginationValidator): Promise<Get
 		return data;
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
-			throw new HTTPBadRequestError('Erro ao buscar restaurantes');
+			throw new HTTPRequestError('Erro ao buscar restaurantes', 500);
 		}
 
 		throw error;
