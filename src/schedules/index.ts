@@ -5,6 +5,6 @@ const Schedules = Router();
 
 const schedulesControllers = SchedulesControllers();
 
-Schedules.post('/', schedulesControllers.create);
+Schedules.post('/:id/schedules', schedulesControllers.create);
 
 export { Schedules };
