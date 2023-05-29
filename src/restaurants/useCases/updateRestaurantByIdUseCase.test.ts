@@ -35,7 +35,7 @@ describe('updateRestaurant', () => {
 			},
 		});
 		id = createdRestaurant.id;
-	}, 20000);
+	}, 30000);
 
 	afterAll(async () => {
 		await prisma.$transaction([
@@ -43,7 +43,7 @@ describe('updateRestaurant', () => {
 			prisma.restaurant.deleteMany(),
 		]);
 		cache.delMatch('^restaurant:');
-	});
+	}, 30000);
 
 	it('should be able to update restaurant', async () => {
 		const updatedRestaurant = await updateRestaurantByIdUseCase(id, {
