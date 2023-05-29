@@ -26,6 +26,13 @@ describe('createRestaurant', () => {
 	};
 	let id: string;
 
+	beforeAll(async () => {
+		await prisma.$transaction([
+			prisma.address.deleteMany(),
+			prisma.restaurant.deleteMany(),
+		]);
+	}, 20000);
+
 	afterAll(async () => {
 		await prisma.$transaction([
 			prisma.address.deleteMany(),
