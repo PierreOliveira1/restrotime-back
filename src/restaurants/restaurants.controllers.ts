@@ -1,11 +1,40 @@
 import { Request, Response } from 'express';
 import { paginationValidator } from '@/validators/paginationValidator';
 import { ZodError } from 'zod';
-import { getRestaurants } from './restaurants.services';
+import {
+	getRestaurants,
+	createRestaurant,
+	getRestaurantById,
+	updateRestaurantById,
+	deleteRestaurantById,
+} from './restaurants.services';
 import { mapIssuesZodError } from '@/utils/mapIssuesZodError';
 import { HTTPRequestError } from '@/utils/httpRequestError';
+import { createRestaurantValidator } from './validators/createRestaurant';
+import { getRestaurantByIdValidator } from './validators/getRestaurantById';
+import { updateRestaurantValidator } from './validators/updateRestaurant';
 
 export function RestaurantsController() {
+	async function create(req: Request, res: Response) {
+		try {
+			const restaurantData = await createRestaurantValidator.parseAsync(
+				req.body,
+			);
+			const restaurant = await createRestaurant(restaurantData);
+			return res.status(201).json(restaurant);
+		} catch (error) {
+			if (error instanceof ZodError) {
+				return res.status(400).json({ issues: mapIssuesZodError(error) });
+			}
+
+			if (error instanceof HTTPRequestError) {
+				return res.status(error.statusCode).json({ message: error.message });
+			}
+
+			return res.status(500).json({ message: 'Erro interno no servidor' });
+		}
+	}
+
 	async function getAll(req: Request, res: Response) {
 		try {
 			const pagination = paginationValidator.parse({
@@ -28,7 +57,68 @@ export function RestaurantsController() {
 		}
 	}
 
+	async function getById(req: Request, res: Response) {
+		try {
+			const { id } = await getRestaurantByIdValidator.parseAsync(req.params);
+			const restaurant = await getRestaurantById(id);
+			return res.status(200).json(restaurant);
+		} catch (error) {
+			if (error instanceof ZodError) {
+				return res.status(400).json({ issues: mapIssuesZodError(error) });
+			}
+
+			if (error instanceof HTTPRequestError) {
+				return res.status(error.statusCode).json({ message: error.message });
+			}
+
+			return res.status(500).json({ message: 'Erro interno no servidor' });
+		}
+	}
+
+	async function updateById(req: Request, res: Response) {
+		try {
+			const { id } = await getRestaurantByIdValidator.parseAsync(req.params);
+			const restaurantData = await updateRestaurantValidator.parseAsync(
+				req.body,
+			);
+			const restaurant = await updateRestaurantById(id, restaurantData);
+			return res.status(200).json(restaurant);
+		} catch (error) {
+			if (error instanceof ZodError) {
+				return res.status(400).json({ issues: mapIssuesZodError(error) });
+			}
+
+			if (error instanceof HTTPRequestError) {
+				return res.status(error.statusCode).json({ message: error.message });
+			}
+
+			return res.status(500).json({ message: 'Erro interno no servidor' });
+		}
+	}
+
+	async function deleteById(req: Request, res: Response) {
+		try {
+			const { id } = await getRestaurantByIdValidator.parseAsync(req.params);
+			await deleteRestaurantById(id);
+			return res.status(204).send();
+		} catch (error) {
+			if (error instanceof ZodError) {
+				return res.status(400).json({ issues: mapIssuesZodError(error) });
+			}
+
+			if (error instanceof HTTPRequestError) {
+				return res.status(error.statusCode).json({ message: error.message });
+			}
+
+			return res.status(500).json({ message: 'Erro interno no servidor' });
+		}
+	}
+
 	return {
+		create,
 		getAll,
+		getById,
+		updateById,
+		deleteById,
 	};
 }
