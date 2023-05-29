@@ -8,6 +8,26 @@ export async function createSchedulesUseCase(
 	schedules: CreateSchedule,
 ) {
 	try {
+		const restaurant = await prisma.restaurant.findUnique({
+			where: {
+				id: restaurantId,
+			},
+			include: {
+				schedules: true,
+			},
+		});
+
+		if (!restaurant) {
+			throw new HTTPRequestError('Restaurante não encontrado', 404);
+		}
+
+		if (restaurant.schedules.length > 0) {
+			throw new HTTPRequestError(
+				'Os horários de funcionamento já foram cadastrados',
+				400,
+			);
+		}
+
 		const schedulesWithDaysUnique: CreateSchedule = schedules.filter(
 			(schedule, index, self) =>
 				self.findIndex((s) => s.dayOfWeek === schedule.dayOfWeek) === index,
@@ -61,6 +81,13 @@ export async function createSchedulesUseCase(
 
 			if (schedule.openingTime2 && schedule.closingTime2) {
 				validateSchedule(schedule.openingTime2, schedule.closingTime2);
+
+				if (schedule.closingTime > schedule.openingTime2) {
+					throw new HTTPRequestError(
+						'Horário de fechamento não pode ser maior que o de abertura',
+						400,
+					);
+				}
 			}
 		});
 
