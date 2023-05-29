@@ -11,32 +11,32 @@ import {
 	updateRestaurantByIdUseCase,
 } from './useCases';
 
-export async function createRestaurant(
+export function createRestaurant(
 	restaurant: CreateRestaurant,
 ): Promise<GetRestaurantResponse> {
 	return createRestaurantUseCase(restaurant);
 }
 
-export async function getRestaurants({
+export function getRestaurants({
 	page,
 	limit,
 }: PaginationValidator): Promise<GetRestaurantsResponse> {
 	return getRestaurantsUseCase({ page, limit });
 }
 
-export async function getRestaurantById(
+export function getRestaurantById(
 	id: string,
 ): Promise<GetRestaurantResponse> {
 	return getRestaurantByIdUseCase(id);
 }
 
-export async function updateRestaurantById(
+export function updateRestaurantById(
 	id: string,
 	data: UpdateRestaurantDto,
 ): Promise<GetRestaurantResponse> {
 	return updateRestaurantByIdUseCase(id, data);
 }
 
-export async function deleteRestaurantById(id: string) {
+export function deleteRestaurantById(id: string) {
 	return deleteRestaurantByIdUseCase(id);
 }
