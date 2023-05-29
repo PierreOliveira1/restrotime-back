@@ -1,7 +1,3 @@
-import { Address } from '@prisma/client';
-import { CreateRestaurant } from '../validators/createRestaurant';
+import { UpdateRestaurant } from '../validators/updateRestaurant';
 
-export interface UpdateRestaurantDto
-	extends Partial<Omit<CreateRestaurant, 'schedules' | 'address'>> {
-	address?: Partial<Address>;
-}
+export type UpdateRestaurantDto = UpdateRestaurant;
