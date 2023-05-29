@@ -19,8 +19,8 @@ enum TypeRestaurant {
 model Schedule {
   id           String     @id @default(uuid()) @map("_id")
   dayOfWeek    Int
-  openingTime  String
-  closingTime  String
+  openingTime  String?
+  closingTime  String?
   openingTime2 String?
   closingTime2 String?
   createdAt    DateTime   @default(now())
