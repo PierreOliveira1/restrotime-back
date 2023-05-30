@@ -1,20 +1,16 @@
-import {
-	createRestaurant,
-	getRestaurants,
-	getRestaurantById,
-	updateRestaurantById,
-	deleteRestaurantById,
-} from './restaurants.services';
-import {
-	createRestaurantUseCase,
-	deleteRestaurantByIdUseCase,
-	getRestaurantByIdUseCase,
-	getRestaurantsUseCase,
-	updateRestaurantByIdUseCase,
-} from './useCases';
+import { HTTPRequestError } from '@/utils/httpRequestError';
+import * as restaurantsServices from './restaurants.services';
+import * as useCases from './useCases';
 import { CreateRestaurant } from './validators/createRestaurant';
 
-jest.mock('./useCases');
+jest.mock('./useCases', () => ({
+	createRestaurantUseCase: jest.fn(),
+	getRestaurantsUseCase: jest.fn(),
+	getRestaurantByIdUseCase: jest.fn(),
+	updateRestaurantByIdUseCase: jest.fn(),
+	deleteRestaurantByIdUseCase: jest.fn(),
+	isOpenRestaurantUseCase: jest.fn(),
+}));
 
 describe('Restaurant Services', () => {
 	const restaurantData: CreateRestaurant = {
@@ -45,26 +41,33 @@ describe('Restaurant Services', () => {
 	});
 
 	it('should be createRestaurant should call createRestaurantUseCase with the provided restaurant data', async () => {
-		await createRestaurant(restaurantData);
-		expect(createRestaurantUseCase).toHaveBeenCalledWith(restaurantData);
+		await restaurantsServices.createRestaurant(restaurantData);
+		expect(useCases.createRestaurantUseCase).toHaveBeenCalledWith(
+			restaurantData,
+		);
 	});
 
 	it('should call getRestaurantsUseCase with the provided pagination data', async () => {
-		await getRestaurants(paginationData);
-		expect(getRestaurantsUseCase).toHaveBeenCalledWith(paginationData);
+		await restaurantsServices.getRestaurants(paginationData);
+		expect(useCases.getRestaurantsUseCase).toHaveBeenCalledWith(paginationData);
 	});
 
 	it('should call getRestaurantByIdUseCase with the provided restaurant id', async () => {
 		const restaurantId = '123456';
-		await getRestaurantById(restaurantId);
-		expect(getRestaurantByIdUseCase).toHaveBeenCalledWith(restaurantId);
+		await restaurantsServices.getRestaurantById(restaurantId);
+		expect(useCases.getRestaurantByIdUseCase).toHaveBeenCalledWith(
+			restaurantId,
+		);
 	});
 
 	it('should call updateRestaurantByIdUseCase with the provided restaurant id and data', async () => {
 		const restaurantId = '123456';
 
-		await updateRestaurantById(restaurantId, restaurantData);
-		expect(updateRestaurantByIdUseCase).toHaveBeenCalledWith(
+		await restaurantsServices.updateRestaurantById(
+			restaurantId,
+			restaurantData,
+		);
+		expect(useCases.updateRestaurantByIdUseCase).toHaveBeenCalledWith(
 			restaurantId,
 			restaurantData,
 		);
@@ -72,7 +75,25 @@ describe('Restaurant Services', () => {
 
 	it('should call deleteRestaurantByIdUseCase with the provided restaurant id', async () => {
 		const restaurantId = '123456';
-		await deleteRestaurantById(restaurantId);
-		expect(deleteRestaurantByIdUseCase).toHaveBeenCalledWith(restaurantId);
+		await restaurantsServices.deleteRestaurantById(restaurantId);
+		expect(useCases.deleteRestaurantByIdUseCase).toHaveBeenCalledWith(
+			restaurantId,
+		);
 	});
+
+	it('should call isOpenRestaurantUseCase with the correct arguments', async () => {
+		const id = 'restaurant-id';
+		const datetime = '2023-05-29T12:00:00.000Z';
+
+		try {
+			await restaurantsServices.isOpenRestaurant(id, datetime);
+			expect(true).toBe(false);
+		} catch (error) {
+			expect(error).toBeInstanceOf(HTTPRequestError);
+			if (error instanceof HTTPRequestError) {
+				expect(error.statusCode).toBe(404);
+				expect(error.message).toBe('Restaurante não encontrado');
+			}
+		}
+	}, 50000);
 });
