@@ -124,7 +124,7 @@ export async function createSchedulesUseCase(
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
 			throw new HTTPRequestError('Erro ao criar horários', 400);
 		}
-		console.log(error);
+
 		throw error;
 	}
 }
