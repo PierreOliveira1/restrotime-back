@@ -10,6 +10,7 @@ import {
 	getRestaurantsUseCase,
 	updateRestaurantByIdUseCase,
 } from './useCases';
+import { isOpenRestaurantUseCase } from './useCases/isOpenRestaurantUseCase';
 
 export function createRestaurant(
 	restaurant: CreateRestaurant,
@@ -39,4 +40,8 @@ export function updateRestaurantById(
 
 export function deleteRestaurantById(id: string) {
 	return deleteRestaurantByIdUseCase(id);
+}
+
+export function isOpenRestaurant(id: string, datetime: string) {
+	return isOpenRestaurantUseCase(id, datetime);
 }
