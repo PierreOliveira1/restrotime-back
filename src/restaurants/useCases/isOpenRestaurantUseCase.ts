@@ -2,6 +2,11 @@ import { prisma } from '@/database';
 import { HTTPRequestError } from '@/utils/httpRequestError';
 import { Prisma } from '@prisma/client';
 
+function createDateWithTime(time: string, datetime: string) {
+	const newDate = new Date(`${datetime.split('T')[0]}T${time}`);
+	return newDate.getTime();
+}
+
 export async function isOpenRestaurantUseCase(id: string, datetime: string) {
 	try {
 		const resturant = await prisma.restaurant.findUnique({
@@ -31,36 +36,14 @@ export async function isOpenRestaurantUseCase(id: string, datetime: string) {
 			return false;
 		}
 
-		const openingTimeHours = schedule.openingTime.split(':').map(Number);
-		const openingTime = new Date().setHours(
-			openingTimeHours[0],
-			openingTimeHours[1],
-			openingTimeHours[2],
-		);
+		const openingTime = createDateWithTime(schedule.openingTime, datetime);
+		const closingTime = createDateWithTime(schedule.closingTime, datetime);
 
-		const closingTimeHours = schedule.closingTime.split(':').map(Number);
-		const closingTime = new Date().setHours(
-			closingTimeHours[0],
-			closingTimeHours[1],
-			closingTimeHours[2],
-		);
-
-		const currentTime = new Date(datetime).getTime();
+		const currentTime = new Date(datetime.split('.')[0]).getTime();
 
 		if (schedule.openingTime2 && schedule.closingTime2) {
-			const openingTime2Hours = schedule.openingTime2.split(':').map(Number);
-			const openingTime2 = new Date().setHours(
-				openingTime2Hours[0],
-				openingTime2Hours[1],
-				openingTime2Hours[2],
-			);
-
-			const closingTime2Hours = schedule.closingTime2.split(':').map(Number);
-			const closingTime2 = new Date().setHours(
-				closingTime2Hours[0],
-				closingTime2Hours[1],
-				closingTime2Hours[2],
-			);
+			const openingTime2 = createDateWithTime(schedule.openingTime2, datetime);
+			const closingTime2 = createDateWithTime(schedule.closingTime2, datetime);
 
 			if (
 				(currentTime >= openingTime && currentTime <= closingTime) ||
