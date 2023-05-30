@@ -414,4 +414,62 @@ describe('Restaurants Controllers', () => {
 			});
 		});
 	});
+
+	describe('isOpen', () => {
+		it('should be able to isOpen a restaurant', async () => {
+			req.params = { id: 'b4d3d3d3-4d3d-4d3d-4d3d-4d3d3d3d3d3d' };
+			req.query = { datetime: '2023-05-28T12:00:00.000Z' };
+
+			jest.spyOn(restaurantsServices, 'isOpenRestaurant').mockResolvedValueOnce(
+				true,
+			);
+
+			const { isOpen } = RestaurantsController();
+
+			await isOpen(req as Request, res as Response);
+
+			expect(res.status).toHaveBeenCalledWith(200);
+			expect(res.json).toHaveBeenCalledWith({
+				opened: true,
+			});
+		});
+
+		it('should return not found for inexistent restaurant', async () => {
+			req.params = { id: 'b4d3d3d3-4d3d-4d3d-4d3d-4d3d3d3d3d3d' };
+			req.query = { datetime: '2023-05-28T12:00:00.000Z' };
+
+			jest.spyOn(restaurantsServices, 'isOpenRestaurant').mockRejectedValueOnce(
+				new HTTPRequestError('Restaurante não encontrado', 404),
+			);
+
+			const { isOpen } = RestaurantsController();
+
+			await isOpen(req as Request, res as Response);
+
+			expect(res.status).toHaveBeenCalledWith(404);
+			expect(res.json).toHaveBeenCalledWith({
+				message: 'Restaurante não encontrado',
+			});
+		});
+
+		it('should return internal server error for other errors', async () => {
+			req.params = { id: 'b4d3d3d3-4d3d-4d3d-4d3d-4d3d3d3d3d3d' };
+			req.query = { datetime: '2023-05-28T12:00:00.000Z' };
+
+			jest.spyOn(restaurantsServices, 'isOpenRestaurant').mockRejectedValueOnce(
+				new Prisma.PrismaClientUnknownRequestError('Internal server error', {
+					clientVersion: '2.24.1',
+				}),
+			);
+
+			const { isOpen } = RestaurantsController();
+
+			await isOpen(req as Request, res as Response);
+
+			expect(res.status).toHaveBeenCalledWith(500);
+			expect(res.json).toHaveBeenCalledWith({
+				message: 'Erro interno no servidor',
+			});
+		});
+	});
 });
