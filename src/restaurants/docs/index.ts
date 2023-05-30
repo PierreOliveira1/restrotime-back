@@ -313,6 +313,80 @@ const docs: Partial<OpenAPIV3.Document> = {
 				},
 			},
 		},
+		'/restaurants/{id}/is-open': {
+			get: {
+				summary: 'Check if a restaurant is open',
+				description: 'Check if a restaurant is open',
+				tags: ['Restaurants'],
+				parameters: [
+					{
+						in: 'path',
+						name: 'id',
+						description: 'Restaurant ID',
+						required: true,
+						example: '4ef9926b-d361-4bb8-90c6-cb2d609f8c1e',
+					},
+					{
+						in: 'query',
+						name: 'datetime',
+						description: 'Date and time to check if the restaurant is open',
+						required: true,
+						example: '2021-08-01T20:00:00.000Z',
+					}
+				],
+				responses: {
+					'200': {
+						description: 'OK',
+						content: {
+							'application/json': {
+								schema: {
+									type: 'object',
+									properties: {
+										opened: {
+											type: 'boolean',
+											example: true,
+										},
+									},
+								},
+							},
+						},
+					},
+					'400': {
+						description: 'Bad Request',
+						content: {
+							'application/json': {
+								schema: {
+									type: 'array',
+									items: {
+										type: 'object',
+										properties: {
+											path: {
+												type: 'string',
+												example: 'id',
+											},
+											message: {
+												type: 'string',
+												example: 'O id informado não é um UUID válido',
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+					'500': {
+						description: 'Internal Server Error',
+						content: {
+							'application/json': {
+								schema: {
+									$ref: '#/components/schemas/InternalServerError',
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 	components: {
 		schemas: {
