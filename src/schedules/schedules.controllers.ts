@@ -64,7 +64,7 @@ export function SchedulesControllers() {
 
 	async function update(req: Request, res: Response) {
 		try {
-			const body = updateSchedulesValidator.parse(req.body.schedules);
+			const body = updateSchedulesValidator.parse(req.body);
 			const { id } = getSchedulesByIdValidator.parse(req.params);
 
 			const schedules = await updateSchedules(id, body);
