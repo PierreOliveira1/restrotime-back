@@ -69,7 +69,7 @@ describe('Is Open Restaurant Use Case', () => {
 	});
 
 	it('should return false if restaurant is closed', async () => {
-		const datetime = new Date().setHours(13, 0, 0, 0);
+		const datetime = new Date().setHours(20, 0, 0, 0);
 		const isOpen = await isOpenRestaurantUseCase(id, new Date(datetime).toISOString());
 		expect(isOpen).toBe(false);
 	});
