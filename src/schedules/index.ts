@@ -6,5 +6,8 @@ const Schedules = Router();
 const schedulesControllers = SchedulesControllers();
 
 Schedules.post('/:id/schedules', schedulesControllers.create);
+Schedules.get('/:id/schedules', schedulesControllers.getByRestaurant);
+Schedules.put('/:id/schedules', schedulesControllers.update);
+Schedules.delete('/:id/schedules', schedulesControllers.del);
 
 export { Schedules };
