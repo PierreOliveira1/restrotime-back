@@ -3,6 +3,7 @@ import { getRestaurantsUseCase } from './getRestaurantsUseCase';
 import { getRestaurantByIdUseCase } from './getRestaurantByIdUseCase';
 import { updateRestaurantByIdUseCase } from './updateRestaurantByIdUseCase';
 import { deleteRestaurantByIdUseCase } from './deleteRestaurantByIdUseCase';
+import { isOpenRestaurantUseCase } from './isOpenRestaurantUseCase';
 
 export {
 	createRestaurantUseCase,
@@ -10,4 +11,5 @@ export {
 	getRestaurantByIdUseCase,
 	updateRestaurantByIdUseCase,
 	deleteRestaurantByIdUseCase,
+	isOpenRestaurantUseCase,
 };
