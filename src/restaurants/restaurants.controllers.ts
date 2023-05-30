@@ -7,12 +7,14 @@ import {
 	getRestaurantById,
 	updateRestaurantById,
 	deleteRestaurantById,
+	isOpenRestaurant,
 } from './restaurants.services';
 import { mapIssuesZodError } from '@/utils/mapIssuesZodError';
 import { HTTPRequestError } from '@/utils/httpRequestError';
 import { createRestaurantValidator } from './validators/createRestaurant';
 import { getRestaurantByIdValidator } from './validators/getRestaurantById';
 import { updateRestaurantValidator } from './validators/updateRestaurant';
+import { isOpenRestaurantValidator } from './validators/isOpenRestaurant';
 
 export function RestaurantsController() {
 	async function create(req: Request, res: Response) {
@@ -114,11 +116,35 @@ export function RestaurantsController() {
 		}
 	}
 
+	async function isOpen(req: Request, res: Response) {
+		try {
+			const { id } = await getRestaurantByIdValidator.parseAsync(req.params);
+			const { datetime } = await isOpenRestaurantValidator.parseAsync(req.query);
+
+			const opened = await isOpenRestaurant(id, datetime);
+
+			return res.status(200).json({
+				opened,
+			});
+		} catch (error) {
+			if (error instanceof ZodError) {
+				return res.status(400).json({ issues: mapIssuesZodError(error) });
+			}
+
+			if (error instanceof HTTPRequestError) {
+				return res.status(error.statusCode).json({ message: error.message });
+			}
+
+			return res.status(500).json({ message: 'Erro interno no servidor' });
+		}
+	}
+
 	return {
 		create,
 		getAll,
 		getById,
 		updateById,
 		deleteById,
+		isOpen,
 	};
 }
