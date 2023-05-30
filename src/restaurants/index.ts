@@ -7,6 +7,7 @@ const restaurantsController = RestaurantsController();
 
 Restaurants.get('/', restaurantsController.getAll);
 Restaurants.get('/:id', restaurantsController.getById);
+Restaurants.get('/:id/isOpen', restaurantsController.isOpen);
 Restaurants.post('/', restaurantsController.create);
 Restaurants.patch('/:id', restaurantsController.updateById);
 Restaurants.delete('/:id', restaurantsController.deleteById);
