@@ -2,12 +2,15 @@ import { prisma } from '@/database';
 import { CreateSchedule } from '../dto/createSchedule.dto';
 import { Prisma } from '@prisma/client';
 import { HTTPRequestError } from '@/utils/httpRequestError';
+import { CacheManager } from '@/utils/cache';
 
 export async function createSchedulesUseCase(
 	restaurantId: string,
 	schedules: CreateSchedule,
 ) {
 	try {
+		const cache = CacheManager();
+		const cacheKey = `schedules:${restaurantId}`;
 		const restaurant = await prisma.restaurant.findUnique({
 			where: {
 				id: restaurantId,
@@ -111,6 +114,10 @@ export async function createSchedulesUseCase(
 				restaurantId,
 			})),
 		});
+
+		cache.del(cacheKey);
+		cache.del(`restaurant:${restaurantId}`);
+		cache.delMatch('^restaurants:');
 
 		return schedulesCreated;
 	} catch (error) {

@@ -2,9 +2,13 @@ import { prisma } from '@/database';
 import { UpdateSchedules } from '../dto/updateSchedules.dto';
 import { HTTPRequestError } from '@/utils/httpRequestError';
 import { Prisma } from '@prisma/client';
+import { CacheManager } from '@/utils/cache';
 
 export async function updateSchedulesUseCase(id: string, data: UpdateSchedules) {
 	try {
+		const cache = CacheManager();
+		const cacheKey = `schedules:${id}`;
+
 		if (!data.length) {
 			throw new HTTPRequestError('Nenhum horário informado', 400);
 		}
@@ -86,6 +90,11 @@ export async function updateSchedulesUseCase(id: string, data: UpdateSchedules) 
 				}),
 			),
 		);
+
+		cache.del(cacheKey);
+		cache.del(`restaurant:${id}`);
+		cache.delMatch('^restaurants:');
+		cache.set(cacheKey, schedules);
 
 		return schedules;
 	} catch (error) {

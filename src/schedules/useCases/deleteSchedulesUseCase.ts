@@ -2,9 +2,12 @@ import { prisma } from '@/database';
 import { HTTPRequestError } from '@/utils/httpRequestError';
 import { Prisma } from '@prisma/client';
 import { DeleteSchedules } from '../dto/deleteSchedules.dto';
+import { CacheManager } from '@/utils/cache';
 
 export async function deleteSchedulesUseCase(id: DeleteSchedules) {
 	try {
+		const cache = CacheManager();
+		const cacheKey = `schedules:${id}`;
 		const schedules = await prisma.schedule.findMany({
 			where: {
 				id: {
@@ -32,6 +35,10 @@ export async function deleteSchedulesUseCase(id: DeleteSchedules) {
 				}),
 			),
 		);
+
+		cache.del(cacheKey);
+		cache.del(`restaurant:${id}`);
+		cache.delMatch('^restaurants:');
 
 		return deletedSchedules;
 	} catch (error) {

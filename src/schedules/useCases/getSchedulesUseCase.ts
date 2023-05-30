@@ -1,9 +1,12 @@
 import { prisma } from '@/database';
+import { CacheManager } from '@/utils/cache';
 import { HTTPRequestError } from '@/utils/httpRequestError';
 import { Prisma } from '@prisma/client';
 
 export async function getSchedulesUseCase(id: string) {
 	try {
+		const cache = CacheManager();
+		const cacheKey = `schedules:${id}`;
 		const restaurant = await prisma.restaurant.findUnique({
 			where: {
 				id,
@@ -26,6 +29,8 @@ export async function getSchedulesUseCase(id: string) {
 		if (!schedules.length) {
 			throw new HTTPRequestError('Nenhum horário encontrado', 404);
 		}
+
+		cache.set(cacheKey, schedules);
 
 		return schedules;
 	} catch (error) {
