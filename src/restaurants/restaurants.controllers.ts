@@ -46,7 +46,10 @@ export function RestaurantsController() {
 				limit: Number(req.query.limit),
 			});
 
-			const restaurants = await getRestaurants(pagination);
+			const isAddress = Boolean(req.query.address);
+			const isSchedules = Boolean(req.query.schedules);
+
+			const restaurants = await getRestaurants(pagination, { isAddress, isSchedules });
 			return res.status(200).json(restaurants);
 		} catch (error) {
 			if (error instanceof ZodError) {

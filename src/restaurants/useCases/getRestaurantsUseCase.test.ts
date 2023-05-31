@@ -46,7 +46,7 @@ describe('getRestaurants', () => {
 	}, 20000);
 
 	it('should be able to get restaurants', async () => {
-		const restaurants = await getRestaurantsUseCase({ page: 1, limit: 10 });
+		const restaurants = await getRestaurantsUseCase({ page: 1, limit: 10 }, { isAddress: true, isSchedules: true });
 
 		expect(restaurants).toHaveProperty('data');
 		expect(Array.isArray(restaurants.data)).toBeTruthy();
@@ -73,7 +73,7 @@ describe('getRestaurants', () => {
 
 	it('should be get restaurants with page 0', async () => {
 		try {
-			await getRestaurantsUseCase({ page: 0, limit: 10 });
+			await getRestaurantsUseCase({ page: 0, limit: 10 }, { isAddress: true, isSchedules: true });
 		} catch (error) {
 			expect(error).toBeInstanceOf(Prisma.PrismaClientUnknownRequestError);
 		}
@@ -81,7 +81,7 @@ describe('getRestaurants', () => {
 
 	it('should be get restaurants with limit 0', async () => {
 		try {
-			await getRestaurantsUseCase({ page: 1, limit: 0 });
+			await getRestaurantsUseCase({ page: 1, limit: 0 }, { isAddress: true, isSchedules: true });
 		} catch (error) {
 			expect(error).toBeInstanceOf(Prisma.PrismaClientUnknownRequestError);
 		}

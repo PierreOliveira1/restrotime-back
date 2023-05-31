@@ -48,8 +48,8 @@ describe('Restaurant Services', () => {
 	});
 
 	it('should call getRestaurantsUseCase with the provided pagination data', async () => {
-		await restaurantsServices.getRestaurants(paginationData);
-		expect(useCases.getRestaurantsUseCase).toHaveBeenCalledWith(paginationData);
+		await restaurantsServices.getRestaurants(paginationData, { isAddress: true, isSchedules: true });
+		expect(useCases.getRestaurantsUseCase).toHaveBeenCalledWith(paginationData, { isAddress: true, isSchedules: true });
 	});
 
 	it('should call getRestaurantByIdUseCase with the provided restaurant id', async () => {

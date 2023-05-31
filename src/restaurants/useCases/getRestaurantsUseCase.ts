@@ -4,14 +4,17 @@ import { GetRestaurantsResponse } from '../dto/getRestaurants.dto';
 import { prisma } from '@database';
 import { HTTPRequestError } from '@/utils/httpRequestError';
 import { Prisma } from '@prisma/client';
+import { IsSelect } from '../dto/isSelect.dto';
 
 const cache = CacheManager();
 
-export async function getRestaurantsUseCase({
-	page,
-	limit,
-}: PaginationValidator): Promise<GetRestaurantsResponse> {
+export async function getRestaurantsUseCase(
+	{ page, limit }: PaginationValidator,
+	{ isAddress, isSchedules }: IsSelect,
+): Promise<GetRestaurantsResponse> {
 	try {
+		const address = isAddress ?? false;
+		const schedules = isSchedules ?? false;
 		const cacheKey = `restaurants:${page}:${limit}`;
 
 		if (cache.has(cacheKey)) {
@@ -26,8 +29,8 @@ export async function getRestaurantsUseCase({
 			skip: page * limit - limit,
 			take: limit,
 			include: {
-				address: true,
-				schedules: true,
+				address,
+				schedules,
 			},
 		});
 

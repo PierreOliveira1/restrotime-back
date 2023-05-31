@@ -12,6 +12,7 @@ import {
 	updateRestaurantByIdUseCase,
 } from './useCases';
 import { isOpenRestaurantUseCase } from './useCases/isOpenRestaurantUseCase';
+import { IsSelect } from './dto/isSelect.dto';
 
 export function createRestaurant(
 	restaurant: CreateRestaurant,
@@ -22,8 +23,8 @@ export function createRestaurant(
 export function getRestaurants({
 	page,
 	limit,
-}: PaginationValidator): Promise<GetRestaurantsResponse> {
-	return getRestaurantsUseCase({ page, limit });
+}: PaginationValidator, selects: IsSelect): Promise<GetRestaurantsResponse> {
+	return getRestaurantsUseCase({ page, limit }, selects);
 }
 
 export function getRestaurantById(id: string): Promise<GetRestaurantResponse> {
