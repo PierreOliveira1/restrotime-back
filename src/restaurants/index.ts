@@ -6,6 +6,7 @@ const Restaurants = Router();
 const restaurantsController = RestaurantsController();
 
 Restaurants.get('/', restaurantsController.getAll);
+Restaurants.get('/search', restaurantsController.search);
 Restaurants.get('/:id', restaurantsController.getById);
 Restaurants.get('/:id/is-open', restaurantsController.isOpen);
 Restaurants.post('/', restaurantsController.create);
