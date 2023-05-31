@@ -58,7 +58,7 @@ describe('getRestaurants', () => {
 	}, 20000);
 
 	it('should be able to get restaurants with cache', async () => {
-		const cacheKey = `restaurants:${1}:${10}`;
+		const cacheKey = `restaurants:${1}:${10}:true:true`;
 
 		const cached = cache.get<GetRestaurantsResponse>(cacheKey);
 
