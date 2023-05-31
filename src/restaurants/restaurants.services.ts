@@ -8,6 +8,7 @@ import {
 	deleteRestaurantByIdUseCase,
 	getRestaurantByIdUseCase,
 	getRestaurantsUseCase,
+	searchRestaurantUseCase,
 	updateRestaurantByIdUseCase,
 } from './useCases';
 import { isOpenRestaurantUseCase } from './useCases/isOpenRestaurantUseCase';
@@ -25,9 +26,7 @@ export function getRestaurants({
 	return getRestaurantsUseCase({ page, limit });
 }
 
-export function getRestaurantById(
-	id: string,
-): Promise<GetRestaurantResponse> {
+export function getRestaurantById(id: string): Promise<GetRestaurantResponse> {
 	return getRestaurantByIdUseCase(id);
 }
 
@@ -44,4 +43,11 @@ export function deleteRestaurantById(id: string) {
 
 export function isOpenRestaurant(id: string, datetime: string) {
 	return isOpenRestaurantUseCase(id, datetime);
+}
+
+export function searchRestaurant(
+	search: string,
+	pagination: PaginationValidator,
+) {
+	return searchRestaurantUseCase(search, pagination);
 }
