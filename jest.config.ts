@@ -1,5 +1,5 @@
 import type { Config } from 'jest';
-import { resolve } from 'node:path';
+import { resolve } from 'path';
 
 const config: Config = {
 	preset: 'ts-jest',

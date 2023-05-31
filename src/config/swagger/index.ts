@@ -1,6 +1,6 @@
 import { OpenAPIV3 } from 'openapi-types';
-import path from 'node:path';
-import fs from 'node:fs';
+import path from 'path';
+import fs from 'fs';
 import { mergeObjects } from '@/utils/mergeObjects';
 
 type SwaggerDocument = () => Promise<OpenAPIV3.Document>;

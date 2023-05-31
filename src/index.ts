@@ -1,4 +1,4 @@
-import { createServer } from 'node:http';
+import { createServer } from 'http';
 import { app } from './app';
 import { PORT } from '@/config/envs';
 
