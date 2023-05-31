@@ -387,6 +387,120 @@ const docs: Partial<OpenAPIV3.Document> = {
 				},
 			},
 		},
+		'/restaurants/search': {
+			get: {
+				summary: 'Search restaurants',
+				description: 'Search restaurants',
+				tags: ['Restaurants'],
+				parameters: [
+					{
+						in: 'query',
+						name: 'search',
+						description: 'Search term',
+						required: true,
+						example: 'Fantasy',
+					},
+					{
+						in: 'query',
+						name: 'page',
+						description: 'Page number',
+						required: false,
+						example: 1,
+					},
+					{
+						in: 'query',
+						name: 'limit',
+						description: 'Page size',
+						required: false,
+						example: 10,
+					},
+				],
+				responses: {
+					'200': {
+						description: 'OK',
+						content: {
+							'application/json': {
+								schema: {
+									type: 'object',
+									properties: {
+										data: {
+											type: 'array',
+											items: {
+												type: 'object',
+												properties: {
+													id: {
+														type: 'string',
+														example: '4ef9926b-d361-4bb8-90c6-cb2d609f8c1e',
+													},
+													fantasyName: {
+														type: 'string',
+														example: 'Fantasy Name',
+													},
+													corporateName: {
+														type: 'string',
+														example: 'Corporate Name',
+													},
+												},
+											},
+										},
+										pagination: {
+											type: 'object',
+											properties: {
+												currentPage: {
+													type: 'number',
+													example: 1,
+												},
+												totalPages: {
+													type: 'number',
+													example: 1,
+												},
+												nextPage: {
+													type: 'number',
+													example: null,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+					'400': {
+						description: 'Bad Request',
+						content: {
+							'application/json': {
+								schema: {
+									type: 'array',
+									items: {
+										type: 'object',
+										properties: {
+											path: {
+												type: 'string',
+												example: 'id',
+											},
+											message: {
+												type: 'string',
+												example: 'O id informado não é um UUID válido',
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+					'500': {
+						description: 'Internal Server Error',
+						content: {
+							'application/json': {
+								schema: {
+									$ref: '#/components/schemas/InternalServerError',
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 	components: {
 		schemas: {
