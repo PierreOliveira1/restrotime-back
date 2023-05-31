@@ -46,8 +46,8 @@ export function RestaurantsController() {
 				limit: Number(req.query.limit),
 			});
 
-			const isAddress = Boolean(req.query.address);
-			const isSchedules = Boolean(req.query.schedules);
+			const isAddress = req.query.address === 'false' ? false : true;
+			const isSchedules = req.query.schedules === 'false' ? false : true;
 
 			const restaurants = await getRestaurants(pagination, { isAddress, isSchedules });
 			return res.status(200).json(restaurants);

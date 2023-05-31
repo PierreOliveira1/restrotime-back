@@ -28,6 +28,28 @@ const docs: Partial<OpenAPIV3.Document> = {
 							default: 10,
 						},
 					},
+					{
+						in: 'query',
+						name: 'address',
+						description: 'Address include',
+						required: false,
+						schema: {
+							type: 'boolean',
+							default: false,
+							example: true,
+						},
+					},
+					{
+						in: 'query',
+						name: 'schedules',
+						description: 'Schedules include',
+						required: false,
+						schema: {
+							type: 'boolean',
+							default: false,
+							example: true,
+						},
+					},
 				],
 				responses: {
 					'200': {

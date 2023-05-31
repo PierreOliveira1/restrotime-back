@@ -20,10 +20,10 @@ export function createRestaurant(
 	return createRestaurantUseCase(restaurant);
 }
 
-export function getRestaurants({
-	page,
-	limit,
-}: PaginationValidator, selects: IsSelect): Promise<GetRestaurantsResponse> {
+export function getRestaurants(
+	{ page, limit }: PaginationValidator,
+	selects: IsSelect,
+): Promise<GetRestaurantsResponse> {
 	return getRestaurantsUseCase({ page, limit }, selects);
 }
 

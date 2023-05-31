@@ -15,7 +15,7 @@ export async function getRestaurantsUseCase(
 	try {
 		const address = isAddress ?? false;
 		const schedules = isSchedules ?? false;
-		const cacheKey = `restaurants:${page}:${limit}`;
+		const cacheKey = `restaurants:${page}:${limit}:${address}:${schedules}`;
 
 		if (cache.has(cacheKey)) {
 			const cached = cache.get<GetRestaurantsResponse>(cacheKey);
