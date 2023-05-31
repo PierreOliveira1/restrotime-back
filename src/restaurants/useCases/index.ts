@@ -4,6 +4,7 @@ import { getRestaurantByIdUseCase } from './getRestaurantByIdUseCase';
 import { updateRestaurantByIdUseCase } from './updateRestaurantByIdUseCase';
 import { deleteRestaurantByIdUseCase } from './deleteRestaurantByIdUseCase';
 import { isOpenRestaurantUseCase } from './isOpenRestaurantUseCase';
+import { searchRestaurantUseCase } from './searchRestaurantUseCase';
 
 export {
 	createRestaurantUseCase,
@@ -12,4 +13,5 @@ export {
 	updateRestaurantByIdUseCase,
 	deleteRestaurantByIdUseCase,
 	isOpenRestaurantUseCase,
+	searchRestaurantUseCase,
 };
