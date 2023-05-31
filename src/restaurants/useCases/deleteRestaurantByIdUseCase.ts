@@ -45,6 +45,7 @@ export async function deleteRestaurantByIdUseCase(id: string) {
 			cache.del(`restaurant:${restaurant.id}`);
 		}
 		cache.delMatch('^restaurants:');
+		cache.delMatch('^search:');
 
 		return restaurant;
 	} catch (error) {

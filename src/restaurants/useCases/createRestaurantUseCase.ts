@@ -43,6 +43,7 @@ export async function createRestaurantUseCase(
 
 		cache.set(`restaurant:${createdRestaurant.id}`, createdRestaurant);
 		cache.delMatch('^restaurants:');
+		cache.delMatch('^search:');
 
 		return createdRestaurant;
 	} catch (error) {
