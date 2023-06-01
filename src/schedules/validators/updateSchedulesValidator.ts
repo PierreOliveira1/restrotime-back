@@ -24,13 +24,13 @@ export const updateSchedulesValidator = zod.array(
 			.regex(/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/, {
 				message: 'Horário de abertura deve estar no formato HH:MM:SS',
 			})
-			.optional(),
+			.nullable(),
 		closingTime2: zod
 			.string()
 			.regex(/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/, {
 				message: 'Horário de fechamento deve estar no formato HH:MM:SS',
 			})
-			.optional(),
+			.nullable(),
 		restaurantId: zod.string().uuid({
 			message: 'ID do restaurante deve ser um UUID válido',
 		}),
