@@ -2,7 +2,8 @@ import { OpenAPIV3 } from 'openapi-types';
 import path from 'path';
 import fs from 'fs';
 import { mergeObjects } from '@/utils/mergeObjects';
-
+import schedulesDocs from '@/schedules/docs';
+import restaurantsDocs from '@/restaurants/docs';
 type SwaggerDocument = () => Promise<OpenAPIV3.Document>;
 type SwaggerDocs = Partial<OpenAPIV3.Document>;
 
@@ -23,18 +24,11 @@ const createSwaggerDocument: SwaggerDocument = async () => {
 		},
 	};
 
-	for (const dir of docsDirs) {
+	const docs = [schedulesDocs, restaurantsDocs];
+
+	for (const doc of docs) {
 		try {
-			const isDocs = fs.existsSync(
-				path.resolve(__dirname, '..', '..', dir, 'docs/index.ts'),
-			);
-
-			if (!isDocs) continue;
-
-			const { default: docs } = await import(`@/${dir}/docs`);
-
-
-			const mergedObjects = mergeObjects<OpenAPIV3.Document, SwaggerDocs>(swaggerDocument, docs);
+			const mergedObjects = mergeObjects<OpenAPIV3.Document, SwaggerDocs>(swaggerDocument, doc);
 			Object.assign(swaggerDocument, mergedObjects);
 		} catch (error) {
 			console.error(error);
